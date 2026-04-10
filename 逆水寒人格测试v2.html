@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>逆水寒SBTI人格测试</title>
+<style>
+
+    :root {
+      --bg: #f6faf6;
+      --panel: #ffffff;
+      --text: #1e2a22;
+      --muted: #6a786f;
+      --line: #dbe8dd;
+      --soft: #edf6ef;
+      --accent: #6c8d71;
+      --accent-strong: #4d6a53;
+      --shadow: 0 16px 40px rgba(47, 73, 55, 0.08);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background:
+        radial-gradient(circle at top left, #f8fff8 0, #f6faf6 36%, #f2f7f3 100%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .shell {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 24px 16px 56px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .hero {
+      padding: 28px;
+      margin-top: 20px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -60px;
+      top: -60px;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: linear-gradient(180deg, rgba(127, 165, 134, 0.18), rgba(127, 165, 134, 0.02));
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--accent-strong);
+      border: 1px solid var(--line);
+      background: var(--soft);
+      border-radius: 999px;
+      padding: 8px 12px;
+      margin-bottom: 16px;
+    }
+
+    h1, h2, h3, p { margin: 0; }
+    .hero h1 {
+      font-size: clamp(28px, 5vw, 52px);
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+      max-width: 680px;
+    }
+    .hero .sub {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.75;
+      max-width: 720px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.3fr 0.9fr;
+      gap: 18px;
+      align-items: stretch;
+      margin-top: 24px;
+    }
+
+    .mini-panel {
+      padding: 18px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, #fbfefb, #f3f8f4);
+    }
+
+    .mini-panel h3 {
+      font-size: 15px;
+      margin-bottom: 10px;
+    }
+
+    .mini-panel ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.8;
+      font-size: 14px;
+    }
+
+        .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 22px;
+    }
+    .hero-minimal {
+      min-height: 48vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 42px 20px;
+    }
+    .hero-minimal::after { display: none; }
+    .hero-minimal h1 {
+      max-width: none;
+      margin: 0;
+    }
+    .hero-actions-single {
+      justify-content: center;
+      margin-top: 28px;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+      transition: transform .16s ease, box-shadow .16s ease, opacity .16s ease;
+      font: inherit;
+    }
+
+    button:hover { transform: translateY(-1px); }
+    button:disabled { cursor: not-allowed; opacity: 0.55; transform: none; }
+
+    .btn-primary {
+      background: var(--accent-strong);
+      color: #fff;
+      padding: 14px 20px;
+      border-radius: 14px;
+      box-shadow: 0 12px 30px rgba(77, 106, 83, 0.18);
+      font-weight: 700;
+    }
+
+    .btn-secondary {
+      background: #fff;
+      color: var(--accent-strong);
+      padding: 14px 20px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      font-weight: 700;
+    }
+
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    .test-wrap,
+    .result-wrap {
+      margin-top: 22px;
+      padding: 22px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .progress {
+      flex: 1;
+      min-width: 240px;
+      height: 10px;
+      background: #edf3ee;
+      border-radius: 999px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress > span {
+      display: block;
+      width: 0;
+      height: 100%;
+      background: linear-gradient(90deg, #97b59c, #5b7a62);
+      border-radius: inherit;
+      transition: width .22s ease;
+    }
+
+    .progress-text {
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .question-list {
+      display: grid;
+      gap: 16px;
+    }
+
+    .question {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+      background: linear-gradient(180deg, #ffffff, #fbfdfb);
+    }
+
+    .question-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 6px 10px;
+      background: var(--soft);
+      border: 1px solid var(--line);
+    }
+
+    .question-title {
+      font-size: 16px;
+      line-height: 1.7;
+      white-space: pre-wrap;
+    }
+
+    .options {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .option {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: #fff;
+      transition: border-color .16s ease, background .16s ease, transform .16s ease;
+    }
+
+    .option:hover {
+      border-color: #bcd0c1;
+      background: #f8fcf9;
+    }
+
+    .option input {
+      margin-top: 3px;
+      accent-color: var(--accent-strong);
+      transform: scale(1.1);
+      flex-shrink: 0;
+    }
+
+    .option-code {
+      font-weight: 800;
+      color: var(--accent-strong);
+      min-width: 22px;
+    }
+
+    .actions-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+      padding-top: 6px;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .result-hero {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .type-box,
+    .score-box,
+    .dim-box,
+    .top3-box,
+    .about-box {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+      background: linear-gradient(180deg, #ffffff, #fbfdfb);
+    }
+
+    .type-kicker {
+      font-size: 12px;
+      color: var(--accent-strong);
+      margin-bottom: 8px;
+      letter-spacing: .05em;
+    }
+
+    .type-name {
+      font-size: clamp(30px, 5vw, 48px);
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+    }
+
+    .type-subname {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .match {
+      margin-top: 18px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 10px 14px;
+      background: var(--soft);
+      border: 1px solid var(--line);
+      color: var(--accent-strong);
+      font-weight: 700;
+    }
+
+    .type-desc {
+      margin-top: 18px;
+      line-height: 1.85;
+      font-size: 15px;
+      color: #304034;
+    }
+
+    .score-box h3,
+    .dim-box h3,
+    .top3-box h3,
+    .about-box h3 {
+      font-size: 16px;
+      margin-bottom: 12px;
+    }
+
+    .score-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .score-item {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px;
+      background: #fff;
+    }
+
+    .score-item .k {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .score-item .v {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--accent-strong);
+    }
+
+    .dim-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .dim-pill {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px;
+      background: #fff;
+    }
+
+    .dim-pill .label {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+
+    .dim-pill .value {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--accent-strong);
+    }
+
+    .top3-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .top3-item {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px;
+      background: #fff;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .top3-item strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .top3-item span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .top3-score {
+      color: var(--accent-strong);
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .about-box p {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .footer-note {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    
+    .result-layout {
+      display: grid;
+      gap: 18px;
+    }
+    .result-top {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+    .poster-box, .type-box, .analysis-box, .dim-box, .note-box {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+      background: linear-gradient(180deg, #ffffff, #fbfdfb);
+    }
+        .poster-box {
+      display: grid;
+      grid-template-rows: 1fr auto;
+      min-height: 280px;
+      overflow: hidden;
+      position: relative;
+      background:
+        radial-gradient(circle at top right, rgba(127,165,134,0.16), rgba(127,165,134,0) 40%),
+        linear-gradient(180deg, #ffffff, #f7fbf8);
+    }
+    .poster-box::after {
+      content: "";
+      position: absolute;
+      right: -46px;
+      bottom: -46px;
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background: linear-gradient(180deg, rgba(127,165,134,0.12), rgba(127,165,134,0.01));
+      pointer-events: none;
+    }
+    .poster-image {
+      width: 100%;
+      min-height: 220px;
+      max-height: 460px;
+      object-fit: contain;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.75);
+      position: relative;
+      z-index: 1;
+    }
+    .poster-box.no-image .poster-image {
+      display: none;
+    }
+    .poster-caption {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.8;
+      position: relative;
+      z-index: 1;
+    }
+    .type-kicker {
+      font-size: 12px;
+      color: var(--accent-strong);
+      margin-bottom: 8px;
+      letter-spacing: .06em;
+    }
+    .type-name {
+      font-size: clamp(30px, 5vw, 48px);
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+    }
+    .type-subname {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.8;
+    }
+    .match {
+      margin-top: 18px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 10px 14px;
+      background: var(--soft);
+      border: 1px solid var(--line);
+      color: var(--accent-strong);
+      font-weight: 700;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+    .analysis-box h3, .dim-box h3, .note-box h3 {
+      font-size: 16px;
+      margin-bottom: 12px;
+    }
+    .result-actions {
+      margin-top: 22px;
+      display: flex;
+      justify-content: flex-end;
+    }
+    .analysis-box p {
+      margin: 0;
+      color: #304034;
+      font-size: 15px;
+      line-height: 1.9;
+      white-space: pre-wrap;
+    }
+    .dim-list {
+      display: grid;
+      gap: 12px;
+    }
+    .dim-item {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+      background: #fff;
+    }
+    .dim-item-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+    .dim-item-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .dim-item-score {
+      color: var(--accent-strong);
+      font-weight: 800;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+    .dim-item p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.8;
+    }
+    .note-box p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .author-box {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: linear-gradient(180deg, #ffffff, #fbfdfb);
+      overflow: hidden;
+    }
+    .author-box summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 18px;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .author-box summary::-webkit-details-marker { display: none; }
+    .author-box summary::after {
+      content: '展开';
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent-strong);
+      border: 1px solid var(--line);
+      background: var(--soft);
+      padding: 6px 10px;
+      border-radius: 999px;
+      flex-shrink: 0;
+    }
+    .author-box[open] summary::after {
+      content: '收起';
+    }
+    .author-content {
+      border-top: 1px solid var(--line);
+      padding: 0 18px 18px;
+    }
+    .author-content p {
+      margin: 14px 0 0;
+      color: #304034;
+      font-size: 14px;
+      line-height: 1.9;
+    }
+
+    .result-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 22px;
+    }
+    @media (max-width: 860px) {
+      .result-top { grid-template-columns: 1fr; }
+    }
+
+@media (max-width: 860px) {
+      .hero-grid,
+      .result-hero {
+        grid-template-columns: 1fr;
+      }
+      .dim-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 600px) {
+      .shell { padding: 14px 12px 42px; }
+      .hero, .test-wrap, .result-wrap { padding: 16px; }
+      .hero h1 { font-size: 32px; }
+      .question-title { font-size: 15px; }
+      .dim-grid,
+      .score-grid { grid-template-columns: 1fr; }
+    }
+  
+
+/* === 逆水寒定制样式 === */
+.option input{display:none}
+.option-check{width:20px;height:20px;border-radius:50%;border:2px solid var(--line);flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:.2s}
+.option.selected .option-check{border-color:var(--accent-strong);background:var(--accent-strong)}
+.option.selected .option-check::after{content:'';width:8px;height:8px;border-radius:50%;background:#fff}
+.option.selected{animation:optPop .25s ease}
+@keyframes optPop{0%{transform:scale(1)}40%{transform:scale(1.02)}100%{transform:scale(1)}}
+
+.question-title.long{max-height:4.8em;overflow:hidden;position:relative;cursor:pointer}
+.question-title.long::after{content:'点击展开全文 ▾';position:absolute;bottom:0;left:0;right:0;height:2.4em;background:linear-gradient(transparent,var(--panel) 70%);display:flex;align-items:flex-end;justify-content:center;font-size:12px;color:var(--accent-strong);font-weight:700;letter-spacing:1px}
+.question-title.long.expanded{max-height:none}
+.question-title.long.expanded::after{display:none}
+
+.result-emoji-wrap{width:140px;height:140px;margin:0 auto 20px;border-radius:50%;background:radial-gradient(circle,rgba(127,165,134,.15),rgba(127,165,134,.04));display:flex;align-items:center;justify-content:center;animation:emojiGlow 3s ease-in-out infinite}
+.result-emoji-inner{font-size:72px;display:block;filter:drop-shadow(0 6px 20px rgba(77,106,83,.2));animation:emojiFloat 3s ease-in-out infinite}
+@keyframes emojiGlow{0%,100%{box-shadow:0 0 30px rgba(127,165,134,.1),0 0 60px rgba(127,165,134,.05)}50%{box-shadow:0 0 40px rgba(127,165,134,.2),0 0 80px rgba(127,165,134,.1)}}
+@keyframes emojiFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+
+.social-tag{margin-top:12px;color:var(--muted);font-size:13px;line-height:1.8}
+</style>
+</head>
+<body>
+<div class="shell">
+  <section id="intro" class="screen active">
+    <div class="hero card hero-minimal">
+      <h1>逆水寒SBTI人格测试</h1>
+      <p class="sub">什么MBTI？来测测你是什么类型的逆水寒玩家。<br>29道题，测出你的江湖真面目。</p>
+      <div class="hero-actions hero-actions-single">
+        <button id="startBtn" class="btn-primary">开始测试</button>
+      </div>
+      <div style="padding-top:2rem;color:var(--muted);font-size:12px">仅供娱乐，与网易逆水寒官方无关</div>
+    </div>
+  </section>
+
+  <section id="test" class="screen">
+    <div class="test-wrap card">
+      <div class="topbar">
+        <div class="progress"><span id="progressBar"></span></div>
+        <div class="progress-text" id="progressText">0 / 29</div>
+      </div>
+      <div id="questionList" class="question-list"></div>
+      <div class="actions-bottom">
+        <div class="hint" id="testHint">答完所有题才能提交。少侠，认真点。</div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <button id="backIntroBtn" class="btn-secondary">返回首页</button>
+          <button id="submitBtn" class="btn-primary" disabled>提交并查看结果</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="result" class="screen">
+    <div class="result-wrap card">
+      <div class="result-layout">
+        <div class="result-top">
+          <div class="poster-box" id="posterBox">
+            <div class="result-emoji-wrap"><span class="result-emoji-inner" id="resultEmoji"></span></div>
+            <div id="posterCaption" class="poster-caption"></div>
+          </div>
+          <div class="type-box">
+            <div class="type-kicker" id="resultKicker">你的江湖人格</div>
+            <div class="type-name" id="resultTypeName"></div>
+            <div class="type-subname" id="resultConfirm"></div>
+            <div class="match" id="matchBadge"></div>
+            <div class="social-tag" id="socialTag"></div>
+          </div>
+        </div>
+        <div class="analysis-box">
+          <h3>确诊报告</h3>
+          <p id="resultDesc"></p>
+        </div>
+        <details class="author-box">
+          <summary>🏥 大宋生存建议</summary>
+          <div class="author-content">
+            <p id="adviceText"></p>
+          </div>
+        </details>
+        <div class="dim-box">
+          <h3>十五维度评分</h3>
+          <div id="dimList" class="dim-list"></div>
+        </div>
+        <div class="note-box">
+          <h3>友情提示</h3>
+          <p>本测试仅供娱乐，与网易逆水寒官方无关。别拿它当诊断、面试、相亲、分手或人生判决书。你可以笑，但别太当真。</p>
+        </div>
+      </div>
+      <div class="result-actions">
+        <button id="restartBtn" class="btn-secondary">重新测试</button>
+        <button id="toTopBtn" class="btn-primary">回到首页</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+const dimMeta={
+  J1:{name:'J1 战斗信仰',model:'江湖修为'},J2:{name:'J2 肝度',model:'江湖修为'},J3:{name:'J3 操作自信',model:'江湖修为'},
+  S1:{name:'S1 社交主动性',model:'社交门道'},S2:{name:'S2 帮会忠诚',model:'社交门道'},S3:{name:'S3 交易心态',model:'社交门道'},
+  A1:{name:'A1 外观执念',model:'审美执念'},A2:{name:'A2 家园执念',model:'审美执念'},A3:{name:'A3 截图欲',model:'审美执念'},
+  E1:{name:'E1 抗挫折力',model:'情绪波动'},E2:{name:'E2 版本信仰',model:'情绪波动'},E3:{name:'E3 退游指数',model:'情绪波动'},
+  I1:{name:'I1 角色代入感',model:'身份认同'},I2:{name:'I2 剧情态度',model:'身份认同'},I3:{name:'I3 氪金态度',model:'身份认同'}
+};
+const dimOrder=['J1','J2','J3','S1','S2','S3','A1','A2','A3','E1','E2','E3','I1','I2','I3'];
+const dimQuestions={J1:['q1','q2'],J2:['q3','q4','q29'],J3:['q5','q6'],S1:['q7','q8'],S2:['q9','q10'],S3:['q11','q12'],A1:['q13','q14'],A2:['q15','q16'],A3:['q17','q18'],E1:['q19','q20'],E2:['q21'],E3:['q22','q23'],I1:['q24','q25','q26'],I2:['q27'],I3:['q28']};
+
+const questions=[{"id": "q1", "dim": "J1", "text": "你在逆水寒里最期待的版本更新是什么？", "options": [{"label": "当然是新外观！新宠物！这么帅！那么美~", "value": 1}, {"label": "都行，有新内容就好", "value": 2}, {"label": "新副本、33等战斗玩法，我要跟上大部队的节奏！", "value": 3}]}, {"id": "q2", "dim": "J1", "text": "你在野外安静地挖矿，突然一个红名玩家朝你走来，距离还有十秒。你的手：", "options": [{"label": "\"你不要过来呀！\"马上走开~", "value": 1}, {"label": "咋滴？想抢矿？一键连招！（加速挖矿）", "value": 2}, {"label": "先打一顿再报官", "value": 3}]}, {"id": "q3", "dim": "J2", "text": "你们只看到我每天在逆水寒里挂机发呆、聊天摸鱼、做一半日课就下线刷抖音的样子，却从没看到我认真研究攻略、凌晨三点搓木桩的样子。你们看不到，因为我确实没干过。那么——你今天的日课做完了吗？", "options": [{"label": "日课？不给羽毛我做它干啥", "value": 1}, {"label": "挑了几个简单的做", "value": 2}, {"label": "必须做完！还得满勤，我就是来逆水寒上班的", "value": 3}]}, {"id": "q4", "dim": "J2", "text": "新版本服务器更新维护中，你的精神状态更接近：", "options": [{"label": "太好了，终于有正当理由不上线了", "value": 1}, {"label": "刷刷社区看看大家在讨论啥，顺便摸个鱼", "value": 2}, {"label": "逆瘾发作，速速开门！", "value": 3}]}, {"id": "q5", "dim": "J3", "text": "组队打副本灭团了。语音里沉默了三秒后，你开口的第一句话是：", "options": [{"label": "我是高手，不开麦", "value": 1}, {"label": "\"刚刚谁没走机制出来认领一下好吗好的\"", "value": 2}, {"label": "\"反正我操作拉满了，不关我的事\"", "value": 3}]}, {"id": "q6", "dim": "J3", "text": "逆水寒玩家打本扣分行为自查，看看你中了几条：1.不管什么场景，统统一键连招 2.走位撞墙卡视角 3.大招交给空气 4.吃掉8次化羽 5.不走机制 6.秒拉秒死", "options": [{"label": "师傅别念了，都是我！", "value": 1}, {"label": "中了两三条，正常失误，谁还没个翻车的时候", "value": 2}, {"label": "这是我队友的症状清单。我负责截图发群嘲笑他们", "value": 3}]}, {"id": "q7", "dim": "S1", "text": "世界频道有人发喇叭：\"滴个情缘，要求衣柜大、声音好听、每天陪玩4小时以上。\"你的反应：", "options": [{"label": "自动忽略", "value": 1}, {"label": "不知道，没看清，反正+1+1+1+1+1+1", "value": 2}, {"label": "点进资料并打招呼私聊", "value": 3}]}, {"id": "q8", "dim": "S1", "text": "每次路过汴京虹桥，你最真实的常态是：", "options": [{"label": "“好多人啊.jpg”，赶紧溜走", "value": 1}, {"label": "镜头拉到最近欣赏自己新染的头发 ", "value": 2}, {"label": "找个最完美的位置展示穿搭，顺便看隔壁模特们齐舞", "value": 3}]}, {"id": "q9", "dim": "S2", "text": "帮会最近连续两周联赛连跪，统战在群里叹气。", "options": [{"label": "光速退帮跳槽", "value": 1}, {"label": "不走！说什么都不走！但也不打帮战嘻嘻", "value": 2}, {"label": "发攻略帮助大家提战，还会去世界频道招人", "value": 3}]}, {"id": "q10", "dim": "S2", "text": "突然某一天，你意识到自己在帮会里投入了太多太多。每天组织帮战、调解矛盾、带新人、凑帮会资金，大当家跑了你接盘，二当家摸鱼你兜底。你不是在玩游戏，你是在当义务居委会主任。但有时候你也会想——我图什么呢？其实大家长期在帮会这种高压环境下情绪有点问题很正常哒～一定要学会自我调节，要相信一切都会啊啊啊啊啊啊啊啊啊！哈哈哈哈！好起来的哒～加油！", "options": [{"label": "所以我早就不这样了。人间清醒，该走就走", "value": 1}, {"label": "……这是在干什么？", "value": 2}, {"label": "这就是我啊。帮会就是我的家", "value": 3}]}, {"id": "q11", "dim": "S3", "text": "萌新好友私聊你：\"大佬能借我288买衣服吗，下周还你。\"", "options": [{"label": "“你看我像不像288”", "value": 1}, {"label": "我直接送你，但是要到6月周年庆才会到账，到时候记得上号领", "value": 2}, {"label": "288而已，直接转了", "value": 3}]}, {"id": "q12", "dim": "S3", "text": "别人说你\"人真好\"，你内心更接近哪句？", "options": [{"label": "我只是在做对我有利的事而已", "value": 1}, {"label": "也许吧", "value": 2}, {"label": "被需要的感觉确实让我开心", "value": 3}]}, {"id": "q13", "dim": "A1", "text": "官方上线了一套新时装，此时你正好有几个玉华染。你的常规操作：", "options": [{"label": "随便染个纯黑或纯白，假装自己是个冷酷杀手。五秒搞定OOTD", "value": 1}, {"label": "在装扮站试了几个颜色，挑了个顺眼的，十分钟内搞定", "value": 2}, {"label": "在染色界面拉RGB拉了三个小时，试图调出绝美独属于自己的颜色，最后发现还不如在装扮站一键应用", "value": 3}]}, {"id": "q14", "dim": "A1", "text": "你在汴京看到一个全身搭配精致的玩家，走过去的时候你甚至觉得ta自带BGM（你的幻觉）。你：", "options": [{"label": "不知道，我的穿搭更曼妙~", "value": 3}, {"label": "多看了两眼，确实挺好看，内心默默夸奖然后离开", "value": 2}, {"label": "当场私聊追问全套搭配方案，回去穿上同款总觉得还差点意思", "value": 1}]}, {"id": "q15", "dim": "A2", "text": "个人认为庄园里不应该随便放家具的。根据传统美学，乱摆的家具会给光临者不好的视觉体验，从而使人心烦意乱。心理学专家曾经说过：不好的视觉体验会传达不好的价值观。再根据勾股定理来说，毛坯房不应该出现在逆水寒里——所以人不吃混凝土拌意大利面的时候，应该去庄园整点装修。那么你的庄园：", "options": [{"label": "庄园？我常常三过家门而不入", "value": 1}, {"label": "一键套用简单的模板，能坐能躺就行", "value": 2}, {"label": "不好意思，我的千万豪宅很高级，但你可以和我一起还房贷吗？OvO", "value": 3}]}, {"id": "q16", "dim": "A2", "text": "朋友拉你参观他精心装修了一个月的庄园。你走进去转了一圈：", "options": [{"label": "\"挺好的\"——但...你对我的手机做了什么，好卡！", "value": 1}, {"label": "\"这个角落可以放个石灯笼，那边的树换成桃花更搭\"——你居然有审美意见", "value": 2}, {"label": "你已经问到了同款模板准备回去一比一复刻了。但更生气的是——他用了一个你买不起的限定摆件", "value": 3}]}, {"id": "q17", "dim": "A3", "text": "你在某个地图赶路，突然光线变化，远处山峦云雾缭绕美如画卷——", "options": [{"label": "无视，继续赶路。", "value": 1}, {"label": "顺手按了一下拍照键，然后继续走", "value": 2}, {"label": "立刻停下，开启拍照，调好角度，选好滤镜，精心卡动作，拍40张选3张修图发在社区", "value": 3}]}, {"id": "q18", "dim": "A3", "text": "你的相册里躺着逆水寒照片的状态：", "options": [{"label": "找不到/不存在/可能在某个角落里躺着几张意外按到的拍照", "value": 1}, {"label": "几十到一百张，偶尔翻翻回忆一下", "value": 2}, {"label": "你不敢看，相册已然成为逆水寒痛册！", "value": 3}]}, {"id": "q19", "dim": "E1", "text": "星期四到了，你拿出了好不容易攒的50抽，结果无事发生......", "options": [{"label": "哇~好美丽的烟花", "value": 1}, {"label": "至少离180保底越来越近了", "value": 2}, {"label": "逆水寒你对我太差了！！！", "value": 3}]}, {"id": "q20", "dim": "E1", "text": "我不仅是菜鸡，我还是joker，我还是咸鱼……（长段弱者独白：\"求给菜鸡一点活路\"）", "options": [{"label": "鱼哭了水知道，我哭了谁知道......", "value": 1}, {"label": "这又是在干什么？", "value": 2}, {"label": "不是，有病咱先治病好吗", "value": 3}]}, {"id": "q21", "dim": "E2", "text": "新流派出了，大家都转去玩新流派了", "options": [{"label": "连夜转职，追求最新鲜的游戏体验", "value": 1}, {"label": "先看看别人的评价，再决定要不要转职", "value": 2}, {"label": "至死不渝！坚决不转职！", "value": 3}]}, {"id": "q22", "dim": "E3", "text": "你游戏里的\"情缘\"或固定亲友突然说因为现实生活繁忙，没空上线。", "options": [{"label": "暗喜：\"终于不用每天强行找话题了\" ", "value": 1}, {"label": "表面惋惜，转头世界频道：\"情缘滴滴\"", "value": 2}, {"label": "痛心疾首，每天帮Ta上号清日常，苦苦等待归来", "value": 3}]}, {"id": "q23", "dim": "E3", "text": "你已经是第三次在帮会群里宣布\"我不跟你们玩了！\"。上两次分别是一个月前和三个月前。", "options": [{"label": "这次是真的", "value": 1}, {"label": "可能过两天气消了就回来了……你们别把我踢了", "value": 2}, {"label": "说归说，玩归玩，我的嘴和我的手从来不归同一个大脑管", "value": 3}]}, {"id": "q24", "dim": "I1", "text": "游戏里的AI NPC越来越智能了，你平时都怎么跟他们互动的？", "options": [{"label": "很酷，不互动", "value": 1}, {"label": "偶尔碰到会调戏一下，比如找高衙内问\"你把我的天赏藏哪了\"", "value": 2}, {"label": "持续输入土味情话撩NPC", "value": 3}]}, {"id": "q25", "dim": "I1", "text": "我game年龄3岁，life的냉혹하다磨没了我的钝角，但磨no掉我向往江湖与自由的靈魂。我前半生很苦，在逆水寒kill了无数的Boss，本以为my的heart已经跟🐟一样冷たい。但是look到我的角色，我就know其实我还young。——请问你给角色取名字花了多长时间？", "options": [{"label": "键盘随便一滚，叫什么无所谓", "value": 1}, {"label": "想了一会儿取了个还行的", "value": 2}, {"label": "仔细斟酌三小时，一定要找到专属于我的极品ID", "value": 3}]}, {"id": "q26", "dim": "I1", "text": "你对自己的游戏角色：", "options": [{"label": "只是个玩游戏的虚拟身份", "value": 1}, {"label": "算是一个精神寄托，看着ta一点点变好还是挺欣慰的。", "value": 2}, {"label": "灵魂羁绊！ta就是平行世界的我本人！", "value": 3}]}, {"id": "q27", "dim": "I2", "text": "主线更新了新章节，CG开始播放。", "options": [{"label": "为什么不能一键跳过所有剧情？", "value": 1}, {"label": "战术性跳过。只看核心剧情和帅气CG", "value": 2}, {"label": "沉浸式观影模式启动！100%代入剧情，跟着NPC同悲同喜。", "value": 3}]}, {"id": "q28", "dim": "I3", "text": "行走江湖，你每月在逆水寒的开销习惯大概属于哪一种？", "options": [{"label": "分文不花。江湖风月本无价，用零氪的姿态闲云野鹤，主打一个随心所欲", "value": 1}, {"label": "理智拔草，偶尔遇见心动的华服，才会解开钱袋子", "value": 2}, {"label": "往事暗沉不可追，账单是不敢细算的", "value": 3}]}, {"id": "q29", "dim": "J2", "text": "最后一题。请凝视自己的灵魂深处，诚实回答：你目前在逆水寒里的真实状态是？", "options": [{"label": "大宋实干家，上线就是纯粹地玩游戏，清日常、打本、PVP，绝不磨叽，完事下线。", "value": 3}, {"label": "佛系同门，上线主打一个陪伴，发呆、拍照、听八卦，高强度玩法雨我无瓜。", "value": 2}, {"label": "赛博盆栽，角色在≠人在。挂机才是本体", "value": 1}]}];
+const TYPE_LIB={"BOSS": {"code": "BOSS", "cn": "当家命", "emoji": "👑", "confirm": "大宋义务居委会主任", "social": "绝配：大腿/萌新 天敌：跳帮王/混子", "desc": "恭喜确诊：帮会义务管理综合症，晚期。\n症状如下：帮会群一有红点你就紧张，帮战少一个人你比当家还急，你不是当家但干的活比当家多，你没有工资但比996还准时上线。\n你在现实里可能连外卖都懒得催，在游戏里却能以惊人的耐心调解两个互不认识的人之间的关系，帮主跑路你接盘，二当家摸鱼你兜底，帮里谁吵架你当和事佬。你每天都在后悔为什么要当这个大冤种，发誓明天起绝对只做混子——\n然而到了第二天：“今晚打团缺个奶妈？算了我切号顶上吧。”", "advice": "把“不管了”“爱咋咋地”打在公屏上，放下助人情结，尊重他人命运。"}, "DATU": {"code": "DATU", "cn": "大腿", "emoji": "💪", "confirm": "全服共享单车", "social": "绝配：咸鱼/奶妈命 天敌：暴躁老哥", "desc": "上线即刻遭遇私聊轰炸：“大佬救急”“打本吗”“今天带我吗”……你的好友列表哪是用来社交的，全是别人单方面给你记下的“带本债务清单”。\n永远的秒伤断层第一，永远的机制救火队长。带飞全场已经成了你的肌肉记忆，偶尔如果在野队遇到个秒伤比你还高的大神，你心里竟然会涌起一阵久违的狂喜——“今天终于能当混子了！”嘴上骂骂咧咧“别拉我，最后一次了啊”，手却已经条件反射点下了进组确认。你玩的哪是逆水寒，你是在大宋做7x24小时全职免费代练。", "advice": "建议设置\"今日已下线\"自动回复。把状态切成“隐身”，是你给肝留下的最后一点体面。"}, "AFK!": {"code": "AFK!", "cn": "挂机侠", "emoji": "💤", "confirm": "赛博植物人", "social": "", "desc": "恭喜确诊：赛博植物人综合症。此结果不是算出来的，是你亲口承认的。\n你的日常：早上开机登录挂机出门，中午瞄一眼背包多了点东西，晚上继续挂着自己去刷手机。你的角色是服务器最勤劳的NPC，24小时站岗风雨无阻。", "advice": "只要你不操作，游戏里的风吹草动都影响不到你。建议在角色头上放个花盆，完成从植物人到真·植物的进化。"}, "KRYP": {"code": "KRYP", "cn": "萨瓦迪卡", "emoji": "💰", "confirm": "刷我滴卡综合症", "social": "绝配：热心侠 天敌：白嫖党", "desc": "恭喜确诊：下单手速比释放大招还快，且从不后悔。\n你对逆水寒有一套自己的哲学：\n虽然常穿的永远是那两套，但拥有和使用是两回事——衣柜满了才有安全感，这跟战力无关，跟心情有关。\n商城上新对你来说像逛超市：进去之前说\"今天只看看\"，出来的时候购物车已经清空了。但你不纠结，因为每一个买的时候都是真心喜欢的。\n你不是在玩逆水寒，你是逆水寒的年度VIP体验官——体验一切、拥有一切、然后告诉别人\"这个值不值得买\"。", "advice": "下次商城上新之前先把购物车里的东西截个图，等三天再看——如果三天后还想买，那就是真爱。不过以你的性格，这条建议的保质期大概只有三秒。"}, "SOLO": {"code": "SOLO", "cn": "独狼", "emoji": "🐺", "confirm": "大宋社恐晚期患者", "social": "绝配：无 天敌：世界话痨/舔狗侠", "desc": "恭喜确诊：选择性社交回避症。注意是\"选择性\"——你不是不会社交，是嫌累。\n好友列表个位数，帮会只是领福利的地方，帮会活动从来不参加。你擅长单人速刷副本，队友对你来说是一种debuff——让你需要考虑配合，打断你的节奏。\n做人好难，但如果可以你想做一棵逆水寒里的树——独自站着，不用社交，风景还好，谁砍你你也不用回话。", "advice": "你的好友列表比大熊猫还珍稀。但玩游戏，自己开心最重要！"}, "NOOB": {"code": "NOOB", "cn": "江湖原住民", "emoji": "🐣", "confirm": "拒绝游戏KPI的自由灵魂", "social": "绝配：大腿/天选大当家 天敌：暴躁老哥", "desc": "恭喜确诊：永久性游戏认知停滞症，无治愈可能。\n很奇怪，明明大家都在同一个服务器，但你玩的游戏好像和别人不一样。\n别人的江湖是打打杀杀、是战力比拼；你的江湖是种树养花、是收集外观、是今天又触发了一个好玩的奇遇。你可能永远记不住那些复杂的副本走位，但你一定记得哪条街、哪座山头的雪景最出片。\n总有人试图教你怎么“变强”，但其实你根本不需要。你不缺那点秒伤，你只是想在这个会呼吸的江湖里，舒舒服服地喘口气。你不是不会玩，你只是不想把游戏玩成枯燥的流水线。", "advice": "官方常说的“殊途同归”，在你身上得到了最完美的体现。在这个人均焦虑的时代，你不被任何进度条绑架，你才是这片江湖真正的赢家。"}, "RAGE": {"code": "RAGE", "cn": "暴躁老哥", "emoji": "🔥", "confirm": "人体血压监测仪", "social": "绝配：世界话痨 天敌：混子/挂机侠", "desc": "恭喜确诊：游戏性高血压，建议立刻停止一切活动（你不会的）。\n为什么！为什么！为什么这个游戏处处跟你作对！同门的冷漠就像北极的冰川！把你这颗滚烫的心浇得嗤嗤冒烟！你的愤怒从不隔夜，因为你根本不给它隔夜的机会——实时引爆，当场炸裂。你的情绪波动比服务器还不稳定，室友以为你每天在跟人打电话吵架。\n但你不是真的恶毒，只是太在乎了。骂完五分钟后还是乖乖上线做日常，一边做一边骂。", "advice": "少看世界频道，多去三清山听听鸟叫。"}, "DRIP": {"code": "DRIP", "cn": "时装怪", "emoji": "👘", "confirm": "汴京时装周首席策展人", "social": "绝配：截图侠 天敌：直男审美/属性党", "desc": "恭喜确诊：虚拟衣柜囤积症，伴有严重的审美强迫。\n对你来说逆水寒不是武侠游戏是换装游戏。战力排行？不关心。副本进度？无所谓。但穿一套丑衣服出门？不如杀了你。角色衣柜比现实衣柜丰富十倍，每一套限定时装你都有，上线第一件事不是做日常而是换衣服。\n你在染色界面花的时间比副本里还长。你知道RGB什么数值能调出莫兰迪色系，知道哪两件时装混搭有惊喜效果。汴京走过身后总有人驻足查看——不是因为你强，是因为你好看。\n你最近一次因为游戏激动不是打Boss掉装备，而是获得了一件特别喜欢的新外观！", "advice": "没有建议，你怎么这么好看！"}, "SIMP": {"code": "SIMP", "cn": "热心侠", "emoji": "🤝", "confirm": "大宋编外雷锋", "social": "绝配：买买买战士/时装怪 天敌：独狼", "desc": "恭喜确诊：主动型社交热情过剩，且完全停不下来。\n你是帮会里最温暖的存在，虽然你自己可能没意识到。谁缺人你第一个报名，谁喊帮忙你秒回\"来了\"，哪怕你手头自己的事还没做完。缺奶你切奶，缺T你换T——不是没有自己的事要做，是看到别人开口了就忍不住想帮。\n你的铜币流向确实有点随缘——今天打本顺手拍了下内功，明天帮那个送了套时装。你不记账，也不指望别人还。你享受的是\"被需要\"那一刻的踏实感，和一起打本时热热闹闹的氛围。\n有人说你\"太好说话了\"，有人劝你\"别什么都答应\"。你听了，觉得有道理，然后下一秒又接了一个求助私聊。你的热情不是因为没有判断力，是因为你觉得——游戏嘛，大家开心最重要，举手之劳的事何必计较那么多。\n你不是在玩逆水寒，你是帮会里那个让所有人觉得\"还好有你在\"的人。", "advice": "你的热心是真的稀缺资源，但偶尔也记得先照顾好自己，才能继续当大家的靠山。"}, "FISH": {"code": "FISH", "cn": "咸鱼", "emoji": "🐟", "confirm": "赛博咸鱼综合症", "social": "绝配：挂机侠/混子 天敌：肝帝", "desc": "恭喜确诊：赛博咸鱼综合症 ，晚期，已无治疗必要。\n你对逆水寒的一切都无所谓到了一种禅宗的境界。战力？不关心。日常？想起来就做。帮战？你有帮吗？换个地图，世界很大。你的游戏日常：上线→站在汴京桥头发呆→看看世界频道乐一乐→发现没什么想做的→下线。做人好难，如果可以你想做一根薯条。薯条很合群，一根薯条丢进一堆薯条里就找不到了。\n但你才是真正看透一切的人。当别人为排名焦虑、为帮战吵架时，你在钓鱼。字面意义上的钓鱼。人不吃混凝土拌意大利面的时候，应该去码头整点薯条。", "advice": "继续保持，你必将修炼成仙~"}, "PLOT": {"code": "PLOT", "cn": "剧情痴", "emoji": "📖", "confirm": "虚拟江湖深度共情综合症", "social": "绝配：世界话痨 天敌：跳过侠", "desc": "恭喜确诊：虚拟叙事成瘾症，沉浸度超标。\n你玩游戏从不带“跳过”键，别人在疯狂跳剧情赶进度，你在逐帧截图品味CG。\n别人眼里的江湖是打怪升级，你眼里的江湖是一张盘根错节的人物关系网。你不仅对主线倒背如流，连路边一把破剑的道具描述、奇遇里的几句闲聊，你都能敏锐地扒出第三章和第七章之间埋下的伏笔。你发在论坛的剧情解析长贴，总能引来无数惊呼：“卧槽，原来这里还有个隐藏彩蛋？！”\n你极度重感情，为某个人物的意难平写过几千字的小传；某段剧情结束后，你会特意跑回那个NPC曾经站过的地方默默待上十分钟，在心里给他敬一杯酒。路过的玩家以为你在挂机，只有你自己知道，你在和一位老朋友告别。", "advice": "保护好你这份柔软的共情力。江湖不只有打打杀杀，正是因为有你，大宋的恩怨情仇才有了真正的温度。"}, "HOME": {"code": "HOME", "cn": "装修鬼", "emoji": "🏡", "confirm": "大宋建设局编外规划师", "social": "绝配：散财童子 天敌：手残拆家党", "desc": "恭喜确诊：虚拟空间设计强迫症。\n对你来说，《逆水寒》根本不是什么武侠MMO，而是一款附带了打怪玩法的“3D硬核建筑软件”。\n你对PVP唯唯诺诺，在庄园里重拳出击。每天种菜收菜只为肝那点“资材”，新出的衣服可以不买，但上新的家具盲盒和积木组件必须拿下。别人用积木搭房子，你用积木在岛上建紫禁城、苏州园林和赛博朋克夜之城。如果有人来参观你的庄园，手机没有卡到掉帧，你会觉得是自己的组件堆叠得还不够宏大。\n什么？有人敢说你搭的景“一般般”？——当场送客！大宋鲁班的心血也是你这等凡人能评价的？", "advice": "你的审美和设计能力如果能变现，你早就是著名建筑师了。只可惜你所有的才华，都用来疯狂榨干前来参观你庄园的好友的手机处理器。"}, "JUMP": {"code": "JUMP", "cn": "跳帮王", "emoji": "🦘", "confirm": "大宋灵活就业人员", "social": "绝配：无 天敌：天选大当家", "desc": "恭喜确诊：帮会归属感缺失综合症。\n进帮三天，就是你的极限考察期。第一天看联赛打什么段位，第二天看群里活人多不多，第三天评估当家的办事能力。只要有一项不达标——联赛掉段了？溜！帮主爱画大饼？溜！直接光速退帮，留下一个潇洒的背影。\n你堪称大宋最顶级的“帮会HR”，不管到哪个新群都能在十分钟内和大家混熟，甚至还能混个眼熟再走。你不是在玩逆水寒，你是在大宋进行无止境的“寻找乌托邦帮会”田野调查。", "advice": "建议把各大帮会统战都加好友，方便你随时\"择木而栖\"。"}, "FARM": {"code": "FARM", "cn": "肝帝", "emoji": "⚙️", "confirm": "大宋赛博劳模", "social": "绝配：大腿 天敌：咸鱼", "desc": "官方主打“殊途同归”劝你别太累，你主打一个“条条大路我都要走绝”。\n你有着比打卡上班还要严苛的生物钟。每天一睁眼，不是问今天星期几，而是条件反射：青崖书做完了吗？活力清空了吗？游历收菜了吗？\n别人慢悠悠做周常，你周一晚上就已经把“风云令”上限刷爆了。对你来说，最爽的不是副本爆了绝世独珍，而是看着所有红点被消灭、段位进度条全满的那一瞬间带来的多巴胺狂飙。看着朋友号上快溢出的活力值，你比当事人还要抓心挠肝：“你这活力怎么满了？快去挖矿/采摘啊！这简直是暴殄天物！”", "advice": "建议把日常清单打印出来贴工位上，这样上班和玩游戏的体验就完全一致了，无缝切换，毫无违和。"}, "SNAP": {"code": "SNAP", "cn": "摄影师", "emoji": "📸", "confirm": "大宋时空定格大师", "social": "绝配：时装怪 天敌：画质压缩党", "desc": "恭喜确诊：虚拟摄影上瘾症。\n别人的江湖是刀光剑影、秒伤内卷，你的江湖是风花雪月、光影交错。\n你有一双能发现大宋极致浪漫的眼睛。当所有人在新地图疯狂寻人打怪找宝箱时，你总是默默开启“极简UI”，屏蔽掉所有玩家，将镜头对准一束穿过竹林的阳光，或是一片随风飘落的桃花。\n你记录了帮会结义时的烟花，记录了情缘初见时的晚霞，也记录了自己捏了三个小时才满意的完美侧颜。别人打出的极品装备会随版本迭代被淘汰，但你相册里定格的每一个瞬间，都是这个虚拟江湖里最保值的浪漫。", "advice": "请继续保持你对美的偏执。正是因为有你“大宋野生摄影师”的存在，大家才惊觉原来天天路过的汴京桥头，竟然有这么美的风景。"}, "HEAL": {"code": "HEAL", "cn": "奶妈命", "emoji": "💊", "confirm": "大宋赛博活菩萨", "social": "绝配：大腿/暴躁老哥 天敌：脆皮刺客", "desc": "你的逆水寒日常，就是一部心酸的《大宋行医录》。\n每一个不爱走位、瞎吃技能的输出，都是你命中注定的劫。别人打本看的是Boss的华丽特效，你打本全程只死盯着屏幕左边的队伍血条。你根本不知道Boss长什么样，你只知道那几个死活不躲红圈的近战DPS是你的“活爹”。你的社交圈极广，因为全服的输出都想绑定一个操作好、网速快的神仙奶妈。你嘴上抱怨，但真看到一次完美救援、全队丝血秒变满血的时候，嘴角又会忍不住疯狂上扬。", "advice": "作为全队唯一掌握生杀大权的真·Boss，请支棱起来！下次开本前先立规矩：态度不好的不奶，秒伤太低的不奶。归根结底得听奶妈的。"}, "RICH": {"code": "RICH", "cn": "江湖大善人", "emoji": "🧧", "confirm": "被动型“V我50”受害者", "social": "绝配：萌新/装修鬼 天敌：骗子/倒商", "desc": "你对逆水寒最大的误解，是以为自己在玩武侠游戏，其实你在玩《大宋首富：从散尽家财开始》。\n别人逛街是看风景，你逛街是看谁顺眼就发个红包。帮群里只要有红点，多半是你又在发拼手气红包活跃气氛了。有人觉得你是“冤大头”，有人把你当“大腿”，而你微微一笑，深藏功与名——赚钱不就是为了听这几声清脆的金币入账音效吗？\n在你眼里，没有什么问题是一个红包解决不了的；如果有，那就直接拉满，送个天赏。你不是在玩游戏，你是在大宋进行一场盛大的社会财富再分配实验。", "advice": "下周四上新外观的时候，能不能也加我个好友？我叫得比他们都甜。"}, "DEAD": {"code": "DEAD", "cn": "灰屏体验官", "emoji": "💀", "confirm": "被动型和平主义者", "social": "绝配：暴躁老哥 天敌：全服红名玩家", "desc": "恭喜确诊：被动型和平主义者。\n你对外宣称自己是“风景党”、“和平主义者”，不喜欢打打杀杀。但其实你心里清楚，你只是单纯的——打！不！过！无论是什么流派，在你手里都能玩出一碰就碎的玻璃质感。你的逆水寒青春，就是由一场又一场的灰屏组成的。别人在研究内功搭配怎么提高秒伤，你在研究怎么搭配内功能让自己在野外苟活得久一点。\n如果游戏里有“被击杀次数排行榜”，你绝对是全服断层第一的大佬。你不是脾气好，你只是在一次次的“阵亡”中，参透了生命的脆弱。", "advice": "承认吧，你就是这条街最脆的仔。建议少去是非之地溜达，老老实实在汴京虹桥挂机听曲儿，安全区才是你永远的家。"}, "CHAT": {"code": "CHAT", "cn": "世界话痨", "emoji": "📢", "confirm": "世界频道钉子户", "social": "绝配：暴躁老哥/剧情痴 天敌：独狼", "desc": "恭喜确诊：世界频道表达欲过剩综合症。\n世界频道发言量全服前十。什么都聊——今天吃了什么、做了什么梦、某个NPC长得像你同事、你家猫踩了键盘——不需要话题，你就是话题本身。\n你的角色ID就是你的招牌，世界频道里你的名字出现频率比任何NPC都高——某种意义上，你才是汴京最知名的常驻居民。 服务器所有人都认识你，虽然不一定记得你叫什么，但一定见过你的发言。你可以一天不打本、一天不做日常，但不能一天不在世界频道冒泡。不发言的那天，总觉得少了点什么——像早上没刷牙就出门了。", "advice": "建议出书《汴京见闻录》，记录你在世界频道的所见所闻与人间百态。说不定会火哦~"}, "HAHA": {"code": "HAHA", "cn": "NPC", "emoji": "🫠", "confirm": "大宋编外群众演员", "social": "绝配：咸鱼 天敌：天选大当家", "desc": "恭喜确诊：人格特征弥散症，俗称\"什么都行综合症\"。\n睡觉吧——不是，玩游戏吧。这方面我虽然不是专家，但我可以很负责任地跟你说：你玩太多不行，玩太少也不行。太长吧时间久了，太短吧时间又太短了。其实我只是这么认为。正如我开头所说我不是专家。我也不知道。\n你的测试结果就跟上面这段话一样——什么都说了，但什么都没说。每个维度都在中间，没有突出特征。你就是那种\"什么都行\"\"都可以\"\"随便\"\"你们定\"的人。会打PVP但不算热爱，会做日常但经常漏，会社交但不算social。\n你是逆水寒里的水——没有形状，但能填满任何容器。你不想做薯条也不想做NPC，你就想做你自己——虽然你自己也不知道自己到底是什么。你不是在玩逆水寒，你只是恰好在线。", "advice": "你什么都沾一点但什么都不突出，像一杯温水——不烫嘴也不解渴。建议继续保持。"}};
+
+const PATTERNS=[
+{code:"BOSS",v:[2,3,3,3,3,2,2,2,2,2,2,3,2,2,2]},
+{code:"DATU",v:[2,3,3,2,2,2,2,1,1,1,2,3,1,1,2]},
+{code:"AFK!",v:[1,1,1,1,1,1,1,1,1,1,1,2,1,1,1]},
+{code:"KRYP",v:[2,2,2,2,2,1,3,1,2,2,2,3,2,2,3]},
+{code:"SOLO",v:[3,2,3,1,1,2,2,1,1,1,3,2,2,1,2]},
+{code:"NOOB",v:[1,1,1,2,2,2,2,2,2,1,1,2,2,2,1]},
+{code:"RAGE",v:[3,2,2,3,2,2,1,1,1,3,2,3,1,1,2]},
+{code:"DRIP",v:[1,1,2,2,2,1,3,1,3,1,2,2,3,2,3]},
+{code:"SIMP",v:[1,2,1,3,3,3,2,2,2,1,1,2,3,2,2]},
+{code:"FISH",v:[1,1,1,1,1,2,1,1,1,1,1,2,1,1,1]},
+{code:"PLOT",v:[1,2,1,2,2,2,2,2,2,1,2,3,3,3,2]},
+{code:"HOME",v:[1,2,1,2,2,2,1,3,2,1,2,3,3,2,2]},
+{code:"JUMP",v:[2,2,2,2,1,2,1,1,1,2,1,2,1,1,2]},
+{code:"FARM",v:[1,3,2,2,2,2,1,1,1,2,3,3,1,1,1]},
+{code:"SNAP",v:[1,1,1,2,2,2,3,2,3,1,2,2,3,2,2]},
+{code:"HEAL",v:[1,3,2,3,3,3,1,1,1,1,2,3,2,2,1]},
+{code:"RICH",v:[1,2,2,3,2,3,2,2,2,1,2,2,2,2,3]},
+{code:"DEAD",v:[1,1,1,2,2,2,2,1,1,3,1,2,2,2,1]},
+{code:"CHAT",v:[2,1,2,3,2,2,2,2,2,2,1,3,3,2,2]},
+{code:"HAHA",v:[2,2,2,2,2,2,2,2,2,2,2,2,2,2,2]}
+];
+
+const app={answers:{}};
+const screens={intro:document.getElementById('intro'),test:document.getElementById('test'),result:document.getElementById('result')};
+const questionList=document.getElementById('questionList');
+const progressBar=document.getElementById('progressBar');
+const progressText=document.getElementById('progressText');
+const submitBtn=document.getElementById('submitBtn');
+const testHint=document.getElementById('testHint');
+
+function showScreen(name){Object.entries(screens).forEach(([k,el])=>{el.classList.toggle('active',k===name)});window.scrollTo({top:0,behavior:'smooth'})}
+
+function renderQuestions(){
+  questionList.innerHTML='';
+  questions.forEach((q,idx)=>{
+    const card=document.createElement('article');
+    card.className='question';
+    card.innerHTML=`
+      <div class="question-meta"><div class="badge">第 ${idx+1} 题</div><div>${dimMeta[q.dim]?.model||''}</div></div>
+      <div class="question-title">${q.text}</div>
+      <div class="options">${q.options.map((opt,i)=>{
+        const code=['A','B','C'][i];
+        const checked=app.answers[q.id]===opt.value?'checked':'';
+        const sel=app.answers[q.id]===opt.value?' selected':'';
+        return `<label class="option${sel}"><input type="radio" name="${q.id}" value="${opt.value}" ${checked}/><div class="option-check"></div><div class="option-code">${code}</div><div>${opt.label}</div></label>`;
+      }).join('')}</div>`;
+    questionList.appendChild(card);
+  });
+  questionList.querySelectorAll('.question-title').forEach(el=>{
+    if(el.textContent.length>80){
+      el.classList.add('long');
+      el.addEventListener('click',()=>el.classList.toggle('expanded'));
+    }
+  });
+  questionList.querySelectorAll('input[type="radio"]').forEach(input=>{
+    input.addEventListener('change',e=>{
+      app.answers[e.target.name]=Number(e.target.value);
+      const opts=e.target.closest('.options');
+      opts.querySelectorAll('.option').forEach(o=>o.classList.remove('selected'));
+      e.target.closest('.option').classList.add('selected');
+      updateProgress();
+    });
+  });
+  updateProgress();
+}
+
+function updateProgress(){
+  const total=questions.length;
+  const done=questions.filter(q=>app.answers[q.id]!==undefined).length;
+  progressBar.style.width=`${(done/total)*100}%`;
+  progressText.textContent=`${done} / ${total}`;
+  const complete=done===total;
+  submitBtn.disabled=!complete;
+  testHint.textContent=complete?'都答完了，来看看你是什么类型的逆水寒玩家吧。':'答完所有题才能提交。少侠，认真点。';
+}
+
+function computeResult(){
+  if(app.answers['q29']===1){
+    return{type:TYPE_LIB['AFK!'],isAfk:true,scores:{},matchPct:100};
+  }
+  const scores={};
+  dimOrder.forEach(dim=>{
+    const qids=dimQuestions[dim];
+    const vals=qids.map(id=>app.answers[id]||0);
+    scores[dim]=+(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1);
+  });
+  const userVec=dimOrder.map(d=>scores[d]);
+  let best=null,bestDist=Infinity;
+  PATTERNS.forEach(p=>{
+    if(p.code==='AFK!')return;
+    let dist=0;
+    for(let i=0;i<15;i++)dist+=(userVec[i]-p.v[i])**2;
+    dist=Math.sqrt(dist);
+    if(dist<bestDist){bestDist=dist;best=p}
+  });
+  const maxDist=Math.sqrt(15*4);
+  const matchPct=Math.max(0,Math.round((1-bestDist/maxDist)*100));
+  return{type:TYPE_LIB[best.code],isAfk:false,scores,matchPct};
+}
+
+function renderResult(){
+  const r=computeResult();
+  const t=r.type;
+  document.getElementById('resultEmoji').textContent=t.emoji;
+  document.getElementById('resultKicker').textContent=r.isAfk?'隐藏人格已激活':'你的江湖人格';
+  document.getElementById('resultTypeName').textContent=`${t.code}（${t.cn}）`;
+  document.getElementById('resultConfirm').textContent=`确诊：${t.confirm}`;
+  document.getElementById('matchBadge').textContent=r.isAfk?'匹配度 100% · 你亲口承认的':`匹配度 ${r.matchPct}%`;
+  document.getElementById('posterCaption').textContent=t.emoji+' '+t.cn;
+  document.getElementById('socialTag').textContent=t.social||'';
+  document.getElementById('resultDesc').textContent=t.desc;
+  document.getElementById('adviceText').textContent=t.advice;
+  const dimList=document.getElementById('dimList');
+  if(r.isAfk){
+    dimList.innerHTML='<div class="dim-item"><div class="dim-item-top"><div class="dim-item-name">维度评分不适用</div></div><p style="color:var(--muted);font-size:13px;margin:0">此结果由Q29强制触发，未经过维度计算。</p></div>';
+  }else{
+    dimList.innerHTML=dimOrder.map(dim=>`
+      <div class="dim-item">
+        <div class="dim-item-top">
+          <div class="dim-item-name">${dimMeta[dim].name}</div>
+          <div class="dim-item-score">${r.scores[dim]}</div>
+        </div>
+      </div>`).join('');
+  }
+  showScreen('result');
+}
+
+function startTest(){app.answers={};renderQuestions();showScreen('test')}
+
+document.getElementById('startBtn').addEventListener('click',()=>startTest());
+document.getElementById('backIntroBtn').addEventListener('click',()=>showScreen('intro'));
+document.getElementById('submitBtn').addEventListener('click',renderResult);
+document.getElementById('restartBtn').addEventListener('click',()=>startTest());
+document.getElementById('toTopBtn').addEventListener('click',()=>showScreen('intro'));
+</script>
+</body>
+</html>
