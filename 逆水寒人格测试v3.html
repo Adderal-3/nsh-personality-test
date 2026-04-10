@@ -36,10 +36,6 @@ body::before{content:'';position:fixed;inset:0;background:linear-gradient(160deg
 .question-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;color:var(--muted);font-size:12px}
 .badge{display:inline-flex;align-items:center;gap:6px;border-radius:99px;padding:5px 12px;background:rgba(45,138,110,.08);border:1px solid rgba(45,138,110,.12);font-weight:700;font-size:12px;color:var(--accent2)}
 .question-title{font-size:15px;line-height:1.9;white-space:pre-wrap;margin-bottom:4px}
-.question-title.long{max-height:5em;overflow:hidden;position:relative;cursor:pointer}
-.question-title.long::after{content:'点击展开 ▾';position:absolute;bottom:0;left:0;right:0;height:2.6em;background:linear-gradient(transparent,rgba(255,255,255,.9) 60%);display:flex;align-items:flex-end;justify-content:center;font-size:12px;color:var(--accent);font-weight:700;letter-spacing:1px}
-.question-title.long.expanded{max-height:none}
-.question-title.long.expanded::after{display:none}
 .options{display:grid;gap:10px;margin-top:14px}
 .option{display:flex;align-items:flex-start;gap:12px;padding:13px 16px;border-radius:16px;border:1px solid var(--border);background:var(--card2);cursor:pointer;transition:.2s border-color,.2s background,.15s transform;line-height:1.7}
 .option:hover{border-color:rgba(45,138,110,.3);background:rgba(45,138,110,.04)}
@@ -1345,7 +1341,7 @@ function renderQuestions() {
     const card = document.createElement('div');
     card.className = 'question';
     card.id = 'q' + qi;
-    const longClass = q.text.length > 80 ? ' long' : '';
+    const longClass = '';
     let optsHtml = '';
     q.opts.forEach((o, oi) => {
       optsHtml += '<div class="option" data-qi="'+qi+'" data-v="'+o.v+'" onclick="pickOption(this)">' +
@@ -1355,7 +1351,7 @@ function renderQuestions() {
     });
     card.innerHTML =
       '<div class="question-meta"><span class="badge">Q'+(qi+1)+'</span><span>\u5927\u5b8b\u673a\u5bc6\u6863\u6848</span></div>' +
-      '<div class="question-title'+longClass+'" onclick="this.classList.toggle(\'expanded\')">'+escHtml(q.text)+'</div>' +
+      '<div class="question-title'+longClass+\">'+escHtml(q.text)+'</div>' +
       '<div class="options">'+optsHtml+'</div>';
     list.appendChild(card);
   });
